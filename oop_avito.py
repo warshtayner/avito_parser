@@ -4,7 +4,7 @@ from requests import get
 import json
 
 
-class AvitoParserHouse:
+class AvitoParserApartment:
     """
     AvitoParserHouse:
         Скрапинг даных с сайта Avito.ru по адресу кокретного запроса.
@@ -13,19 +13,19 @@ class AvitoParserHouse:
         Возвращает двухмерный список данных по каждой квартире ввиде строк.
 
     __data_typing():
-        Уберает лишние переводит в числа данные по каждой квартире.
+        Убирает лишние переводит в числа данные по каждой квартире.
 
     """
 
     def __init__(self, test=False):
         if test:
             with open('file/houses_list_2022-03-04_21-44.json', 'r', encoding="utf-8") as fd:
-                self.houses_list = json.load(fd)
+                self.apartment_list = json.load(fd)
                 print('Читаем с файла ((( РЕЖИМ ТЕСТ )))')
         else:
-            self.__parsing_pages(test=True)
+            self._parsing_pages(test=True)
 
-    def __parsing_pages(self, test=False):
+    def _parsing_pages(self, test=False):
         # Переменные для парсинга
         url = "https://www.avito.ru/petrozavodsk/kvartiry/prodam-ASgBAgICAUSSA8YQ?p="
         _cl_address = "geo-address-fhHd0 text-text-LurtD text-size-s-BxGpL"
@@ -93,7 +93,7 @@ class AvitoParserHouse:
             page += 1
 
         # создаем атрибут
-        self.houses_list = houses
+        self.apartment_list = houses
 
         # сохраняем в файл
         name_file = 'file/houses_list_' + str(datetime.now())[:16].replace(':', '-').replace(' ', '_') + '.json'
@@ -105,13 +105,12 @@ class AvitoParserHouse:
     # def __data_typing(self, test=False):
 
 
-
 if __name__ == "__main__":
-    data_houses = AvitoParserHouse()
+    data_houses = AvitoParserApartment()
 
     # ТЕСТЫ
     #
-    print(f'Количество квартир = {len(data_houses.houses_list)}')
-    print(data_houses.houses_list[0])
-    for i in data_houses.houses_list:
+    print(f'Количество квартир = {len(data_houses.apartment_list)}')
+    print(data_houses.apartment_list[0])
+    for i in data_houses.apartment_list:
         print(len(i))

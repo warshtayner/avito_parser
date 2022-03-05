@@ -1,4 +1,11 @@
-house = ['1-к. квартира, 40,8\xa0м², 4/5\xa0эт. в Петрозаводске', '3700000', 'Пограничная ул., 54', 'р-н Сулажгора',
+from oop_avito import AvitoParserApartment
+import pandas as pd
+# import json
+
+house = ['1-к. квартира, 40,8\xa0м², 4/5\xa0эт. в Петрозаводске',
+         '3700000',
+         'Пограничная ул., 54',
+         'р-н Сулажгора',
          'В продаже однокомнатная квартира на 4-м этаже 5-ти этажного кирпичного дома с большой кухней, общей'
          ' площадью 40,8 кв. М. (+ балкон 2,8 кв. М.).\n\n· Пластиковые окна.\n\n· Санузел совмещенный'
          ' (кафель).\n\n· Большая кухня 11,5 кв. М. \n\n· Кухонный гарнитур остается будущему владельцу'
@@ -20,10 +27,32 @@ house = ['1-к. квартира, 40,8\xa0м², 4/5\xa0эт. в Петрозав
          'Застройщик', '53 минуты назад']
 
 
-def data_typing(test=False):
-    if not test:
-        print(house)
+class DataTyping(AvitoParserApartment):
+
+    def __init__(self, test=False):
+        super().__init__(test)
+        self.data_typing(test)
+
+    def data_typing(self, test=False):
+        df = pd.DataFrame({
+            'rooms': [],
+            'size': [],
+            'total_floors': [],
+            'floor': [],
+            'address': [],
+            'area_id': [],
+            'time_start': [],
+            'agent_id': [],
+            'Description': [],
+            'url': []
+        })
+
+        self.apartment_df = df
 
 
 if __name__ == "__main__":
-    data_typing()
+    ap_av = DataTyping(test=True)
+
+    # ТЕСТЫ
+    #
+    print(ap_av.apartment_df)
