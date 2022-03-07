@@ -1,6 +1,6 @@
+import time
 
-
-house = ['1-к. квартира, 40,8\xa0м², 4/5\xa0эт. в Петрозаводске',
+house = ['Квартира-студия, 32 м², 3/11 эт. в Петрозаводске',
              '3700000',
              'Пограничная ул., 54',
              'р-н Сулажгора',
@@ -45,6 +45,15 @@ if len(house[0]) == 8:
     df['floor'].append(int(house[0][4].split('/')[0]))
     df['total_floors'].append(int(house[0][4].split('/')[1]))
 else:
-    pass
+    df['room'].append(0)
+    df['size'].append(float(house[0][1].replace(',', '.')))
+    df['floor'].append(int(house[0][3].split('/')[0]))
+    df['total_floors'].append(int(house[0][3].split('/')[1]))
+
+df['address'] = house[2]
+df['area'] = house[3]
+df['agent'] = house[6]
+# df['start_time'] =
+
 
 print(df)

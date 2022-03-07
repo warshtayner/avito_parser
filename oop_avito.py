@@ -31,7 +31,7 @@ class AvitoParserHouse:
         # Переменные для парсинга
         url = "https://www.avito.ru/petrozavodsk/kvartiry/prodam-ASgBAgICAUSSA8YQ?p="
         my_head = {
-            'accept': '* / *',
+            'accept': '*/*',
             'user - agent': 'Mozilla / 5.0(Macintosh; Intel Mac OS X 10_14_6)'
                             ' AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 98.0 .4758 .102 Safari / 537.36',
             'Upgrade-Insecure-Requests': '1',
