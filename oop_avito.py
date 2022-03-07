@@ -33,7 +33,8 @@ class AvitoParserHouse:
         my_head = {
             'accept': '* / *',
             'user - agent': 'Mozilla / 5.0(Macintosh; Intel Mac OS X 10_14_6)'
-                            ' AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 98.0 .4758 .102 Safari / 537.36'
+                            ' AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 98.0 .4758 .102 Safari / 537.36',
+            'Upgrade-Insecure-Requests': '1',
         }
         _cl_address = "geo-address-fhHd0 text-text-LurtD text-size-s-BxGpL"
         cl_district = "geo-georeferences-SEtee text-text-LurtD text-size-s-BxGpL"
