@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, date
 import time
 
 house = ['Квартира-студия, 32 м², 3/11 эт. в Петрозаводске',
@@ -23,7 +24,45 @@ house = ['Квартира-студия, 32 м², 3/11 эт. в Петроза
              ' Сигма в 10 мин. На автомобиле по Объездной.',
              'https://www.avito.ru/petrozavodsk/kvartiry/1-k._kvartira_408m_45et._2318495042',
              'Застройщик',
-             '53 минуты назад']
+             '7 февраля 13:10']
+
+ru_month = {
+        'января': 1,
+        'февраля': 2,
+        'марта': 3,
+        'апреля': 4,
+        'мая': 5,
+        'июня': 6,
+        'июля': 7,
+        'августа': 8,
+        'сентября': 9,
+        'октября': 10,
+        'ноября': 11,
+        'декабря': 12,
+    }
+
+
+def int_value_from_ru_month(date_str):
+    for k, v in ru_month.items():
+        date_str = date_str.replace(k, str(v))
+
+    return date_str
+
+
+def get_data_start(date_str):
+
+    if date_str.find('мин') != -1:
+        return str(datetime.now().date())
+    elif date_str.find('час') != -1:
+        return str(datetime.now().date() - timedelta(hours=int(date_str.split(' ')[0])))
+    elif date_str.find('день') != -1 or date_str.find('дн') != -1:
+        return str(datetime.now().date() - timedelta(days=int(date_str.split(' ')[0])))
+    elif date_str.find('нед') != -1:
+        return str(datetime.now().date() - timedelta(weeks=int(date_str.split(' ')[0])))
+    elif date_str.find('назад') == -1:
+        date_str = int_value_from_ru_month(date_str)
+        return str(date(datetime.now().year, int(date_str.split(' ')[1]), int(date_str.split(' ')[0])))
+
 
 df = {
     'room': [],
@@ -34,7 +73,9 @@ df = {
     'area': [],
     'agent': [],
     'start_time': [],
-    'Description': []
+    'url': [],
+    'Description': [],
+    'price': []
 }
 house[0] = house[0].split()
 print(house[0])
@@ -50,10 +91,14 @@ else:
     df['floor'].append(int(house[0][3].split('/')[0]))
     df['total_floors'].append(int(house[0][3].split('/')[1]))
 
-df['address'] = house[2]
-df['area'] = house[3]
-df['agent'] = house[6]
-# df['start_time'] =
+df['address'].append(house[2])
+df['area'].append(house[3])
+df['agent'].append(house[6])
+df['start_time'].append(get_data_start(house[7]))
+df['url'].append(house[5])
+df['Description'].append(house[4])
+df['price'].append(int(house[1]))
+
 
 
 print(df)

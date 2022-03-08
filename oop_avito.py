@@ -14,27 +14,25 @@ class AvitoParserHouse:
     __parsing_pages():
         Возвращает двухмерный список данных по каждой квартире ввиде строк.
 
-    __data_typing():
-        Уберает лишние переводит в числа данные по каждой квартире.
-
     """
 
     def __init__(self, test=False):
-        # if test:
-        #     with open('file/houses_list_2022-03-04_21-44.json', 'r', encoding="utf-8") as fd:
-        #         self.houses_list = json.load(fd)
-        #         print('Читаем с файла ((( РЕЖИМ ТЕСТ )))')
-        # else:
-        self._parsing_pages(test=False)
+        if test:
+            with open('file/houses_list_2022-03-08.json', 'r', encoding="utf-8") as fd:
+                self.houses_list = json.load(fd)
+                print('Читаем с файла ((( РЕЖИМ ТЕСТ )))')
+        else:
+            self._parsing_pages(test=False)
 
     def _parsing_pages(self, test=False):
         # Переменные для парсинга
-        url = "https://www.avito.ru/petrozavodsk/kvartiry/prodam-ASgBAgICAUSSA8YQ?p="
-        my_head = {
+        url = "https://www.avito.ru/petrozavodsk/kvartiry/prodam-ASgBAgICAUSSA8YQ?context=H4sIAAAAAAAA_" \
+              "0q0MrSqLraysFJKK8rPDUhMT1WyLrYyNLNSKk5NLErOcMsvyg3PTElPLVGyrgUEAAD__xf8iH4tAAAA&p="
+        headers = {
             'accept': '*/*',
-            'user - agent': 'Mozilla / 5.0(Macintosh; Intel Mac OS X 10_14_6)'
-                            ' AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 98.0 .4758 .102 Safari / 537.36',
-            'Upgrade-Insecure-Requests': '1',
+            'user-agent': 'Mozilla / 5.0(Macintosh; Intel Mac OS X 10_14_6)'
+                          ' AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 98.0 .4758 .102 Safari / 537.36',
+            'upgrade-insecure-requests': '1'
         }
         _cl_address = "geo-address-fhHd0 text-text-LurtD text-size-s-BxGpL"
         cl_district = "geo-georeferences-SEtee text-text-LurtD text-size-s-BxGpL"
@@ -55,9 +53,9 @@ class AvitoParserHouse:
                     response = html.read()
                 soup = BeautifulSoup(response, 'lxml')
             else:
+                print(f'страница -  {page}')
                 url_next = f'{url}' + str(page)
-                response = get(url_next, headers=my_head)
-
+                response = get(url_next, headers=headers)
                 if response:
                     print('Response OK')
                 else:
@@ -65,7 +63,7 @@ class AvitoParserHouse:
                     print(response.status_code)
                     break
                 soup = BeautifulSoup(response.text, 'lxml')
-                print(soup)
+                # print(soup)
 
             # Ищем  все квартиры на странице
             house_list_ml = soup.find_all('div', class_='iva-item-body-KLUuy')
@@ -101,11 +99,11 @@ class AvitoParserHouse:
                 houses.append(tmp)
 
             # выходим если нет объявлений
-            if not house_list_ml or test or page == 2:
+            if not house_list_ml or test:
                 print('- конец -')
                 break
 
-            sleep(random.randrange(2, 4))
+            sleep(random.randrange(2, 5))
             # номер страницы
             page += 1
 
@@ -114,7 +112,7 @@ class AvitoParserHouse:
             self.houses_list = houses
 
             # сохраняем в файл
-            name_file = 'file/houses_list_' + str(datetime.now())[:16].replace(':', '-').replace(' ', '_') + '.json'
+            name_file = 'file/houses_list_' + str(datetime.now().date()) + '.json'
             with open(name_file, 'w', encoding="utf-8") as out_f:
                 json.dump(houses, out_f, indent=4, ensure_ascii=False)
 
