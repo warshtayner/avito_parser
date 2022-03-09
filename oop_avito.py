@@ -16,25 +16,19 @@ class AvitoParserHouse:
 
     """
 
-    def __init__(self, test=False):
+    def __init__(self, my_url, my_headers, test=False):
         if test:
-            with open('file/houses_list_2022-03-08.json', 'r', encoding="utf-8") as fd:
+            with open('file/houses_list_2022-03-09.json', 'r', encoding="utf-8") as fd:
                 self.houses_list = json.load(fd)
                 print('Читаем с файла ((( РЕЖИМ ТЕСТ )))')
         else:
+            self.url = my_url
+            self.headers = my_headers
             self._parsing_pages(test=False)
 
     def _parsing_pages(self, test=False):
         # Переменные для парсинга
-        url = "https://www.avito.ru/petrozavodsk/kvartiry/prodam-ASgBAgICAUSSA8YQ?context=H4sIAAAAAAAA_" \
-              "0q0MrSqLraysFJKK8rPDUhMT1WyLrYyNLNSKk5NLErOcMsvyg3PTElPLVGyrgUEAAD__xf8iH4tAAAA&p="
-        headers = {
-            'accept': '*/*',
-            'user-agent': 'Mozilla / 5.0(Macintosh; Intel Mac OS X 10_14_6)'
-                          ' AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 98.0 .4758 .102 Safari / 537.36',
-            'upgrade-insecure-requests': '1'
-        }
-        _cl_address = "geo-address-fhHd0 text-text-LurtD text-size-s-BxGpL"
+        cl_address = "geo-address-fhHd0 text-text-LurtD text-size-s-BxGpL"
         cl_district = "geo-georeferences-SEtee text-text-LurtD text-size-s-BxGpL"
         cl_description = "iva-item-text-Ge6dR iva-item-description-FDgK4 text-text-LurtD text-size-s-BxGpL"
         cl_agent = "iva-item-text-Ge6dR iva-item-hideWide-_C9JT text-text-LurtD text-size-s-BxGpL"
@@ -54,8 +48,8 @@ class AvitoParserHouse:
                 soup = BeautifulSoup(response, 'lxml')
             else:
                 print(f'страница -  {page}')
-                url_next = f'{url}' + str(page)
-                response = get(url_next, headers=headers)
+                url_next = f'{self.url}' + str(page)
+                response = get(url_next, headers=self.headers)
                 if response:
                     print('Response OK')
                 else:
@@ -71,8 +65,12 @@ class AvitoParserHouse:
             # Снимаем данные по одной кв.
             for house_ml in house_list_ml:
                 # [харктеристика, цена, адрес]
-                tmp = [(house_ml.a['title']), house_ml.find('meta', itemprop="price")['content'],
-                       house_ml.find('span', class_=_cl_address).text]
+                try:
+                    tmp = [(house_ml.a['title']), house_ml.find('meta', itemprop="price")['content'],
+                           house_ml.find('span', class_=cl_address).text]
+                except AttributeError:
+                    tmp = [(house_ml.a['title']), house_ml.find('meta', itemprop="price")['content'],
+                           '']
                 # район
                 try:
                     tmp.append(house_ml.find('div', class_=cl_district).text)
@@ -99,11 +97,11 @@ class AvitoParserHouse:
                 houses.append(tmp)
 
             # выходим если нет объявлений
-            if not house_list_ml or test:
+            if not house_list_ml or test or page == 100:
                 print('- конец -')
                 break
 
-            sleep(random.randrange(2, 5))
+            sleep(random.randrange(3, 6))
             # номер страницы
             page += 1
 
@@ -122,4 +120,12 @@ class AvitoParserHouse:
 
 
 if __name__ == "__main__":
-    data_houses = AvitoParserHouse()
+    url = "https://www.avito.ru/petrozavodsk/kvartiry/prodam-ASgBAgICAUSSA8YQ?context=H4sIAAAAAAAA_" \
+          "0q0MrSqLraysFJKK8rPDUhMT1WyLrYyNLNSKk5NLErOcMsvyg3PTElPLVGyrgUEAAD__xf8iH4tAAAA&p="
+    headers = {
+        'accept': '*/*',
+        'user-agent': 'Mozilla / 5.0(Macintosh; Intel Mac OS X 10_14_6)'
+                      ' AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 98.0 .4758 .102 Safari / 537.36',
+        'upgrade-insecure-requests': '1'
+    }
+    data_houses = AvitoParserHouse(url, headers)
